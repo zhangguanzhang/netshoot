@@ -2,6 +2,7 @@
 # Build Vars
 IMAGENAME ?= zhangguanzhang/netshoot
 VERSION ?= $(shell git describe --tags --abbrev=0)
+BUILD_ARG ?= --pull
 
 .DEFAULT_GOAL := all
 
@@ -22,7 +23,7 @@ build-%:
 		 .
 
 build-all:
-	@docker buildx build --pull --platform linux/amd64,linux/arm64 \
+	@docker buildx build $(BUILD_ARG) --platform linux/amd64,linux/arm64 \
 		--progress plain \
 		-t $(IMAGENAME) \
 		-t ${IMAGENAME}:${VERSION} \
