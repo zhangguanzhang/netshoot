@@ -1,4 +1,6 @@
-FROM alpine:3.19 AS bin
+ARG BASE_IMG=alpine:3.23
+
+FROM ${BASE_IMG} AS bin
 
 COPY build/bin/ /tmp/
 
@@ -21,70 +23,77 @@ RUN set -ex; \
 	ls -l /tmp /tmp/${GOARCH}/; \
 	mv /tmp/${GOARCH}/* /opt/
 
-FROM alpine:3.19
+FROM ${BASE_IMG}
 
-RUN set -ex \
-    && echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
-    && echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
-    && echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
-    && apk update \
-    && apk add --no-cache \
-    apache2-utils \
-    bash \
-    bind-tools \
-    bird \
-    bridge-utils \
-    busybox-extras \
-    conntrack-tools \
-    curl \
-    dhcping \
-    drill \
-    ethtool \
-    file\
-    fping \
-    iftop \
-    iperf \
-    iperf3 \
-    iproute2 \
-    ipset \
-    iptables \
-    iptraf-ng \
-    iputils \
-    ipvsadm \
-    httpie \
-    jq \
-    libc6-compat \
-    liboping \
-    ltrace \
-    mtr \
-    net-snmp-tools \
-    netcat-openbsd \
-    nftables \
-    ngrep \
-    nmap \
-    nmap-nping \
-    nmap-scripts \
-    openssl \
-    py3-pip \
-    py3-setuptools \
-    scapy \
-    socat \
-    speedtest-cli \
-    openssh \
-    oh-my-zsh \
-    strace \
-    tcpdump \
-    tcptraceroute \
-    tshark \
-    util-linux \
-    vim \
-    git \
-    zsh \
-    websocat \
-    swaks \
-    perl-crypt-ssleay \
-    perl-net-ssleay
-
+RUN set -ex; \
+    if [ $(uname -m) != loongarch64 ];then \
+      echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories; \
+      echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories; \
+      echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories; \
+    fi; \
+    apk update; \
+    apk add --no-cache \
+      apache2-utils \
+      bash \
+      bind-tools \
+      bird \
+      bridge-utils \
+      busybox-extras \
+      conntrack-tools \
+      curl \
+      dhcping \
+      drill \
+      ethtool \
+      file\
+      fping \
+      iftop \
+      iperf \
+      iperf3 \
+      iproute2 \
+      ipset \
+      iptables \
+      iptraf-ng \
+      iputils \
+      ipvsadm \
+      httpie \
+      jq \
+      libc6-compat \
+      liboping \
+      ltrace \
+      mtr \
+      net-snmp-tools \
+      netcat-openbsd \
+      nftables \
+      ngrep \
+      nmap \
+      nmap-nping \
+      nmap-scripts \
+      openssl \
+      py3-pip \
+      py3-setuptools \
+      scapy \
+      socat \
+      speedtest-cli \
+      openssh \
+      oh-my-zsh \
+      strace \
+      tcpdump \
+      tcptraceroute \
+      tshark \
+      util-linux \
+      vim \
+      git \
+      zsh \
+      websocat \
+      perl-crypt-ssleay \
+      perl-net-ssleay \
+    ; \
+    if [ $(uname -m) != loongarch64 ];then \
+      apk add --no-cache \
+        trippy \
+        swaks \
+      ; \
+    fi;
 
 COPY --from=bin /opt/* /usr/local/bin/
 

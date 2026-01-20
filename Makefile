@@ -3,6 +3,7 @@
 IMAGENAME ?= zhangguanzhang/netshoot
 VERSION ?= $(shell git describe --tags --abbrev=0)
 BUILD_ARG ?= --pull --push
+BASE_IMG ?= alpine:3.23
 
 .DEFAULT_GOAL := all
 
@@ -18,6 +19,7 @@ build/bin/%:
 build-%:
 	$(MAKE) build/bin/$*
 	@docker build --pull --platform linux/$* \
+		--build-arg BASE_IMG=$(BASE_IMG) \
 		-t ${IMAGENAME}:${VERSION} \
 		-t ${IMAGENAME} \
 		 .
